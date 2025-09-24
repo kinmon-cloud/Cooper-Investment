@@ -1,0 +1,169 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Resources Coordinator - Cooper Property Investment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white py-6">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">Cooper Property Investment</h1>
+            <p class="mt-2">Join Our Team as a Human Resources Coordinator</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Job Description -->
+        <section class="bg-white shadow-md rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold text-blue-900 mb-4">Human Resources Coordinator</h2>
+            <p class="text-gray-700 mb-4">
+                <strong>Location:</strong> Fort Worth, TX (Hybrid – 3 days onsite, 2 days remote)<br>
+                <strong>Employment Type:</strong> Full-time, Exempt
+            </p>
+            <h3 class="text-xl font-semibold text-blue-900 mt-6 mb-2">About Us</h3>
+            <p class="text-gray-700 mb-4">
+                At Cooper Property Investment, we believe people are the heart of our success. We are a growing property investment firm dedicated to helping our employees grow. We’re looking for a motivated, experienced HR Coordinator to join our team and help us shape a workplace where employees thrive.
+            </p>
+            <h3 class="text-xl font-semibold text-blue-900 mt-6 mb-2">Role Overview</h3>
+            <p class="text-gray-700 mb-4">
+                As an HR Coordinator, you will support daily HR operations, assist with recruitment and onboarding, and serve as a first point of contact for employee inquiries. This role is perfect for someone who is detail-oriented, people-focused, and eager to grow their HR career.
+            </p>
+            <h3 class="text-xl font-semibold text-blue-900 mt-6 mb-2">Key Responsibilities</h3>
+            <ul class="list-disc pl-6 text-gray-700 mb-4">
+                <li>Assist with posting jobs, scheduling interviews, and coordinating candidate communications.</li>
+                <li>Support new hire onboarding, including preparing materials and conducting orientations.</li>
+                <li>Maintain accurate employee records in HR systems.</li>
+                <li>Coordinate training sessions and employee engagement activities.</li>
+                <li>Respond to general HR-related questions with professionalism and confidentiality.</li>
+            </ul>
+            <h3 class="text-xl font-semibold text-blue-900 mt-6 mb-2">Qualifications</h3>
+            <ul class="list-disc pl-6 text-gray-700 mb-4">
+                <li>Bachelor’s degree in Human Resources, Business Administration, or related field.</li>
+                <li>1–2 years of HR or administrative experience preferred.</li>
+                <li>Strong organizational and communication skills.</li>
+                <li>Proficiency with Microsoft Office Suite; HRIS experience a plus.</li>
+                <li>Ability to handle sensitive information with discretion.</li>
+            </ul>
+            <h3 class="text-xl font-semibold text-blue-900 mt-6 mb-2">What We Offer</h3>
+            <ul class="list-disc pl-6 text-gray-700 mb-4">
+                <li>Competitive salary ($55,000–$75,000, depending on experience).</li>
+                <li>Hybrid work schedule with flexible hours.</li>
+                <li>Health, dental, and vision insurance starting after 30 days.</li>
+                <li>401(k) with company match.</li>
+                <li>Paid time off, volunteer days, and professional development opportunities.</li>
+            </ul>
+        </section>
+
+        <!-- Application Form -->
+        <section class="bg-white shadow-md rounded-lg p-6">
+            <h2 class="text-2xl font-semibold text-blue-900 mb-4">Apply Now</h2>
+            <p class="text-gray-700 mb-4">
+                Please submit your resume and a brief cover letter by October 15, 2025.
+            </p>
+            <form id="applicationForm" class="space-y-4" onsubmit="handleSubmit(event)">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input type="text" id="name" name="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Your full name">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="email" name="email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Your email address">
+                </div>
+                <div>
+                    <label for="resume" class="block text-sm font-medium text-gray-700">Resume</label>
+                    <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <div>
+                    <label for="coverLetter" class="block text-sm font-medium text-gray-700">Cover Letter</label>
+                    <textarea id="coverLetter" name="coverLetter" rows="5" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Your cover letter"></textarea>
+                </div>
+                <div>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Submit Application
+                    </button>
+                </div>
+            </form>
+            <p id="formMessage" class="mt-4 text-sm text-green-600 hidden">Your application has been submitted successfully!</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2025 Cooper Property Investment. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('applicationForm');
+            const formMessage = document.getElementById('formMessage');
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const resume = document.getElementById('resume').files[0];
+            const coverLetter = document.getElementById('coverLetter').value;
+
+            if (name && email && resume && coverLetter) {
+                formMessage.classList.remove('hidden');
+                formMessage.textContent = 'Your application has been submitted successfully!';
+                form.reset();
+                setTimeout(() => {
+                    formMessage.classList.add('hidden');
+                }, 5000);
+            } else {
+                formMessage.classList.remove('hidden');
+                formMessage.classList.add('text-red-600');
+                formMessage.textContent = 'Please fill out all fields and upload a resume.';
+                setTimeout(() => {
+                    formMessage.classList.add('hidden');
+                    formMessage.classList.remove('text-red-600');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
